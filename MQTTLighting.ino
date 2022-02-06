@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
-#define portaLDR 2
+#define portaLDR 34
 
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient); 
@@ -11,8 +11,7 @@ const char *SSID = "brisa-1471954";
 const char *PWD = "l5kvx6ru";
 void connectToWiFi() {
   Serial.print("Connecting to ");
- 
-  WiFi.begin(SSID, PWD);
+WiFi.begin(SSID, PWD);
   Serial.println(SSID);
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
@@ -28,7 +27,14 @@ void setupMQTT() {
 }
 void setup() {
   Serial.begin(115200);
-  delay(1000);  
+  delay(1000);
+  /*
+  while(true){
+    delay(500);
+    int val = analogRead(portaLDR);
+    Serial.println(val);  
+  }
+  */
   connectToWiFi();
   setupMQTT();
 }
@@ -48,11 +54,11 @@ void reconnect() {
   }
 }
 void loop() {
+  int val = analogRead(portaLDR);
   char str[80];
   if (!mqttClient.connected())
     reconnect();
   mqttClient.loop();
-  int val = analogRead(portaLDR); 
   Serial.println(val);
   delay(1000);
   sprintf(str, "%d", val);
